@@ -1,0 +1,11 @@
+# Ignore Database Files
+pgdata/
+
+# Ignore Airflow Logs
+logs/
+standalone_admin_password.txt
+
+# Ignore Python Caches and Virtual Environments
+__pycache__/
+*.pyc
+.env
