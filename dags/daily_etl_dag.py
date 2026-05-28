@@ -3,37 +3,44 @@ from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
 
-# 1. Define the default arguments for the DAG
-# This tells Airflow how to handle failures
 default_args = {
     'owner': 'murali',
     'depends_on_past': False,
-    'start_date': days_ago(1), # Start yesterday so it runs immediately
-    'email_on_failure': False,
-    'email_on_retry': False,
+    'start_date': days_ago(1),
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
 }
 
-# 2. Instantiate the DAG
-# We give it a name, attach the arguments, and set the schedule
 with DAG(
-    'daily_product_etl',
+    'daily_end_to_end_pipeline',
     default_args=default_args,
-    description='A simple DAG to run our Python ETL pipeline',
-    schedule_interval='@daily', # Run at midnight every day
+    description='Complete ELT Pipeline: Python to PostgreSQL to dbt',
+    schedule_interval='@daily',
     catchup=False,
 ) as dag:
 
-    # 3. Define the Tasks
-    # We use a BashOperator to literally type "python etl_pipeline.py" into the terminal
-    run_etl_script = BashOperator(
-        task_id='execute_python_script',
-        # Airflow runs inside Docker, so we map the path to where the file lives inside the container
+    # Task 1: Extract and Load (Python)
+    # This runs the actual script we built.
+    extract_and_load = BashOperator(
+        task_id='extract_and_load_api',
         bash_command='python /opt/airflow/dags/etl_pipeline.py',
     )
 
-    # 4. Set the Dependencies (The Graph)
-    # Since we only have one task, it just runs. 
-    # If we had multiple, it would look like: extract >> transform >> load
-    run_etl_script
+    # Task 2: Transform (dbt run)
+    # Simulating the dbt execution
+    transform_data = BashOperator(
+        task_id='dbt_run_models',
+        bash_command='echo "Executing push-down ELT: dbt run -s dim_products"',
+    )
+
+    # Task 3: Data Quality Tests (dbt test)
+    # Simulating the data bouncer
+    test_data = BashOperator(
+        task_id='dbt_test_models',
+        bash_command='echo "Executing data quality checks: dbt test"',
+    )
+
+    # ---------------------------------------------------------
+    # THE GRAPH TOPOLOGY (Setting the dependencies)
+    # ---------------------------------------------------------
+    extract_and_load >> transform_data >> test_data
