@@ -2,16 +2,18 @@ version: 2
 
 models:
   - name: dim_products
-    description: "A clean, dimensional table of products with categorized pricing."
+    description: "Our core product dimension table, enriched with price categories."
     columns:
+      # Test 1 & 2: The ID must exist and must not be duplicated
       - name: product_id
-        description: "The primary key for this table."
+        description: "Primary Key for products."
         tests:
           - unique
           - not_null
+          
+      # Test 3: The category must exactly match our business logic
       - name: price_category
-        description: "Categorized pricing tiers."
+        description: "Tiered pricing category calculated via dbt."
         tests:
           - accepted_values:
-              arguments:
-                values: ['Budget', 'Mid-Range', 'Premium']
+              values: ['Budget', 'Mid-Range', 'Premium']

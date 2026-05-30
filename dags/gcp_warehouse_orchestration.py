@@ -61,10 +61,10 @@ with DAG(
                 echo "dbt is already installed. Skipping download!"
             fi
             
-            # 2. Execute the models using the explicit profiles directory flag
+            # 2. Execute the models and run Data Quality Tests
             cd /opt/airflow/dags/faang_analytics
-            # The period at the end tells dbt to look in the current folder for profiles.yml
-            /home/airflow/.local/bin/dbt run -s dim_products --profiles-dir .
+            # Changed 'run' to 'build' to trigger schema.yml tests
+            /home/airflow/.local/bin/dbt build -s dim_products --profiles-dir .
         """,
         env={'GOOGLE_APPLICATION_CREDENTIALS': '/opt/airflow/dags/gcp_key.json'}
     )
