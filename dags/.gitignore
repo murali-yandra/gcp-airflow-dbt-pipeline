@@ -1,0 +1,15 @@
+# Credentials (CRITICAL)
+gcp_key.json
+
+# Raw Data
+*.csv
+
+# Python & Airflow Environments
+dbt_venv/
+__pycache__/
+logs/
+
+# dbt hidden files
+.dbt/
+target/
+dbt_packages/

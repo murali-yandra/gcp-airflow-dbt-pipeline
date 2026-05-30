@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: cloud_landing_zone
+    description: "Our raw data ingested from Google Cloud Storage."
+    # This must match the BigQuery dataset we created earlier
+    schema: raw_data
+    tables:
+      - name: sample_products
+        description: "Raw product inventory dropped from the Python script."

@@ -1,0 +1,13 @@
+faang_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      # Your exact GCP Project ID
+      project: faang-data-warehouse-2026
+      # The dataset we just created
+      dataset: raw_data
+      threads: 4
+      keyfile: "/opt/airflow/dags/gcp_key.json"
+      location: US
